@@ -23,5 +23,5 @@ export interface TimepickerConfig {
     timepickerClass: string;
     theme: NgxMaterialTimepickerTheme;
     timepickerBaseRef: TimepickerRef;
-    class: string;
+    hostClass: string;
 }

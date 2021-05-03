@@ -1,47 +1,62 @@
-import { Component, HostListener, Inject, Input, OnDestroy, OnInit, TemplateRef } from '@angular/core';
-import { ClockFaceTime } from '../../models/clock-face-time.interface';
-import { TimePeriod } from '../../models/time-period.enum';
-import { TimeUnit } from '../../models/time-unit.enum';
-import { DateTime } from 'luxon';
-import { animate, AnimationEvent, style, transition, trigger } from '@angular/animations';
-import { NgxMaterialTimepickerService } from '../../services/ngx-material-timepicker.service';
-import { Observable, Subject } from 'rxjs';
-import { shareReplay, takeUntil } from 'rxjs/operators';
-import { TimeAdapter } from '../../services/time-adapter';
-import { TimepickerRef } from '../../models/timepicker-ref.interface';
-import { TimepickerConfig } from '../../models/timepicker-config.interface';
-import { NgxMaterialTimepickerEventService } from '../../services/ngx-material-timepicker-event.service';
-import { NgxMaterialTimepickerTheme } from '../../models/ngx-material-timepicker-theme.interface';
-import { TIME_LOCALE } from '../../tokens/time-locale.token';
+import {
+    Component,
+    HostBinding,
+    HostListener,
+    Inject,
+    Input,
+    OnDestroy,
+    OnInit,
+    TemplateRef,
+} from "@angular/core";
+import { ClockFaceTime } from "../../models/clock-face-time.interface";
+import { TimePeriod } from "../../models/time-period.enum";
+import { TimeUnit } from "../../models/time-unit.enum";
+import { DateTime } from "luxon";
+import {
+    animate,
+    AnimationEvent,
+    style,
+    transition,
+    trigger,
+} from "@angular/animations";
+import { NgxMaterialTimepickerService } from "../../services/ngx-material-timepicker.service";
+import { Observable, Subject } from "rxjs";
+import { shareReplay, takeUntil } from "rxjs/operators";
+import { TimeAdapter } from "../../services/time-adapter";
+import { TimepickerRef } from "../../models/timepicker-ref.interface";
+import { TimepickerConfig } from "../../models/timepicker-config.interface";
+import { NgxMaterialTimepickerEventService } from "../../services/ngx-material-timepicker-event.service";
+import { NgxMaterialTimepickerTheme } from "../../models/ngx-material-timepicker-theme.interface";
+import { TIME_LOCALE } from "../../tokens/time-locale.token";
 
 export enum AnimationState {
-    ENTER = 'enter',
-    LEAVE = 'leave'
+    ENTER = "enter",
+    LEAVE = "leave",
 }
 
 @Component({
-    selector: 'ngx-material-timepicker-container',
-    templateUrl: './ngx-material-timepicker-container.component.html',
-    styleUrls: ['./ngx-material-timepicker-container.component.scss'],
+    selector: "ngx-material-timepicker-container",
+    templateUrl: "./ngx-material-timepicker-container.component.html",
+    styleUrls: ["./ngx-material-timepicker-container.component.scss"],
     animations: [
-        trigger('timepicker', [
+        trigger("timepicker", [
             transition(`* => ${AnimationState.ENTER}`, [
-                style({transform: 'translateY(-30%)'}),
-                animate('0.2s ease-out', style({transform: 'translateY(0)'}))
+                style({ transform: "translateY(-30%)" }),
+                animate("0.2s ease-out", style({ transform: "translateY(0)" })),
             ]),
             transition(`${AnimationState.ENTER} => ${AnimationState.LEAVE}`, [
-                style({transform: 'translateY(0)', opacity: 1}),
-                animate('0.2s ease-out', style({transform: 'translateY(-30%)', opacity: 0}))
-            ])
-        ])
+                style({ transform: "translateY(0)", opacity: 1 }),
+                animate(
+                    "0.2s ease-out",
+                    style({ transform: "translateY(-30%)", opacity: 0 })
+                ),
+            ]),
+        ]),
     ],
     providers: [NgxMaterialTimepickerService],
-    host: {
-        'class': 'class'
-    }
 })
-export class NgxMaterialTimepickerContainerComponent implements OnInit, OnDestroy, TimepickerConfig {
-
+export class NgxMaterialTimepickerContainerComponent
+    implements OnInit, OnDestroy, TimepickerConfig {
     selectedHour: Observable<ClockFaceTime>;
     selectedMinute: Observable<ClockFaceTime>;
     selectedPeriod: Observable<TimePeriod>;
@@ -71,7 +86,11 @@ export class NgxMaterialTimepickerContainerComponent implements OnInit, OnDestro
     time: string;
 
     timepickerClass: string;
-    class: string;
+    hostClass: string;
+    @HostBinding("class")
+    get class() {
+        return this.hostClass;
+    }
     theme: NgxMaterialTimepickerTheme;
     timepickerBaseRef: TimepickerRef;
 
@@ -89,33 +108,37 @@ export class NgxMaterialTimepickerContainerComponent implements OnInit, OnDestro
 
     private unsubscribe = new Subject();
 
-    constructor(private timepickerService: NgxMaterialTimepickerService,
-                private eventService: NgxMaterialTimepickerEventService,
-                @Inject(TIME_LOCALE) private locale: string) {
-    }
+    constructor(
+        private timepickerService: NgxMaterialTimepickerService,
+        private eventService: NgxMaterialTimepickerEventService,
+        @Inject(TIME_LOCALE) private locale: string
+    ) {}
 
-    @HostListener('keydown', ['$event'])
+    @HostListener("keydown", ["$event"])
     onKeydown(e: any): void {
         this.eventService.dispatchEvent(e);
         e.stopPropagation();
     }
 
     ngOnInit(): void {
-
         this.animationState = !this.disableAnimation && AnimationState.ENTER;
 
         this.defineTime();
 
-        this.selectedHour = this.timepickerService.selectedHour
-            .pipe(shareReplay({bufferSize: 1, refCount: true}));
+        this.selectedHour = this.timepickerService.selectedHour.pipe(
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
 
-        this.selectedMinute = this.timepickerService.selectedMinute
-            .pipe(shareReplay({bufferSize: 1, refCount: true}));
+        this.selectedMinute = this.timepickerService.selectedMinute.pipe(
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
 
-        this.selectedPeriod = this.timepickerService.selectedPeriod
-            .pipe(shareReplay({bufferSize: 1, refCount: true}));
+        this.selectedPeriod = this.timepickerService.selectedPeriod.pipe(
+            shareReplay({ bufferSize: 1, refCount: true })
+        );
 
-        this.timepickerBaseRef.timeUpdated.pipe(takeUntil(this.unsubscribe))
+        this.timepickerBaseRef.timeUpdated
+            .pipe(takeUntil(this.unsubscribe))
             .subscribe(this.setDefaultTime.bind(this));
     }
 
@@ -146,7 +169,9 @@ export class NgxMaterialTimepickerContainerComponent implements OnInit, OnDestro
     }
 
     setTime(): void {
-        this.timepickerBaseRef.timeSet.next(this.timepickerService.getFullTime(this.format));
+        this.timepickerBaseRef.timeSet.next(
+            this.timepickerService.getFullTime(this.format)
+        );
         this.close();
     }
 
@@ -160,7 +185,10 @@ export class NgxMaterialTimepickerContainerComponent implements OnInit, OnDestro
     }
 
     animationDone(event: AnimationEvent): void {
-        if (event.phaseName === 'done' && event.toState === AnimationState.LEAVE) {
+        if (
+            event.phaseName === "done" &&
+            event.toState === AnimationState.LEAVE
+        ) {
             this.timepickerBaseRef.close();
         }
     }
@@ -172,13 +200,18 @@ export class NgxMaterialTimepickerContainerComponent implements OnInit, OnDestro
 
     private setDefaultTime(time: string): void {
         this.timepickerService.setDefaultTimeIfAvailable(
-            time, this.minTime, this.maxTime, this.format, this.minutesGap);
+            time,
+            this.minTime,
+            this.maxTime,
+            this.format,
+            this.minutesGap
+        );
     }
 
     private defineTime(): void {
         const minTime = this.minTime;
 
-        if (minTime && (!this.time && !this.defaultTime)) {
+        if (minTime && !this.time && !this.defaultTime) {
             const time = TimeAdapter.fromDateTimeToString(minTime, this.format);
 
             this.setDefaultTime(time);
@@ -186,12 +219,14 @@ export class NgxMaterialTimepickerContainerComponent implements OnInit, OnDestro
     }
 
     private onTimeChange(): void {
-        const time = TimeAdapter.toLocaleTimeString(this.timepickerService.getFullTime(this.format), {
-            locale: this.locale,
-            format: this.format
-        });
+        const time = TimeAdapter.toLocaleTimeString(
+            this.timepickerService.getFullTime(this.format),
+            {
+                locale: this.locale,
+                format: this.format,
+            }
+        );
 
         this.timepickerBaseRef.timeChanged.emit(time);
     }
-
 }
