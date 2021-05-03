@@ -542,7 +542,7 @@ let NgxMaterialTimepickerComponent = class NgxMaterialTimepickerComponent {
     }
     close() {
         this.domService.destroyTimepicker();
-        this.closed.next();
+        this.closed.next(this.time);
         this.unsubscribeFromEvents();
     }
     updateTime(time) {

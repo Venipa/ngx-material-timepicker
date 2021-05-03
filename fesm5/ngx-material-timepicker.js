@@ -626,7 +626,7 @@ var NgxMaterialTimepickerComponent = /** @class */ (function () {
     };
     NgxMaterialTimepickerComponent.prototype.close = function () {
         this.domService.destroyTimepicker();
-        this.closed.next();
+        this.closed.next(this.time);
         this.unsubscribeFromEvents();
     };
     NgxMaterialTimepickerComponent.prototype.updateTime = function (time) {

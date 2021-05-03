@@ -32,8 +32,8 @@ export declare class NgxMaterialTimepickerComponent implements TimepickerRef {
     format: number;
     minutesGap: number;
     timeSet: EventEmitter<string>;
-    opened: EventEmitter<null>;
-    closed: EventEmitter<null>;
+    opened: EventEmitter<{}>;
+    closed: EventEmitter<string>;
     hourSelected: EventEmitter<number>;
     timeChanged: EventEmitter<string>;
     private _minutesGap;
