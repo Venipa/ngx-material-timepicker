@@ -1,15 +1,15 @@
-import { OnDestroy, OnInit, TemplateRef } from '@angular/core';
-import { ClockFaceTime } from '../../models/clock-face-time.interface';
-import { TimePeriod } from '../../models/time-period.enum';
-import { TimeUnit } from '../../models/time-unit.enum';
-import { DateTime } from 'luxon';
-import { AnimationEvent } from '@angular/animations';
-import { NgxMaterialTimepickerService } from '../../services/ngx-material-timepicker.service';
-import { Observable } from 'rxjs';
-import { TimepickerRef } from '../../models/timepicker-ref.interface';
-import { TimepickerConfig } from '../../models/timepicker-config.interface';
-import { NgxMaterialTimepickerEventService } from '../../services/ngx-material-timepicker-event.service';
-import { NgxMaterialTimepickerTheme } from '../../models/ngx-material-timepicker-theme.interface';
+import { OnDestroy, OnInit, TemplateRef } from "@angular/core";
+import { ClockFaceTime } from "../../models/clock-face-time.interface";
+import { TimePeriod } from "../../models/time-period.enum";
+import { TimeUnit } from "../../models/time-unit.enum";
+import { DateTime } from "luxon";
+import { AnimationEvent } from "@angular/animations";
+import { NgxMaterialTimepickerService } from "../../services/ngx-material-timepicker.service";
+import { Observable } from "rxjs";
+import { TimepickerRef } from "../../models/timepicker-ref.interface";
+import { TimepickerConfig } from "../../models/timepicker-config.interface";
+import { NgxMaterialTimepickerEventService } from "../../services/ngx-material-timepicker-event.service";
+import { NgxMaterialTimepickerTheme } from "../../models/ngx-material-timepicker-theme.interface";
 export declare enum AnimationState {
     ENTER = "enter",
     LEAVE = "leave"
@@ -40,7 +40,8 @@ export declare class NgxMaterialTimepickerContainerComponent implements OnInit, 
     maxTime: DateTime;
     time: string;
     timepickerClass: string;
-    class: string;
+    hostClass: string;
+    readonly class: string;
     theme: NgxMaterialTimepickerTheme;
     timepickerBaseRef: TimepickerRef;
     defaultTime: string;

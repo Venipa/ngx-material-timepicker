@@ -1,5 +1,5 @@
 import { __decorate, __param } from 'tslib';
-import { ɵɵdefineInjectable, Injectable, ComponentFactoryResolver, ApplicationRef, Injector, Optional, Inject, ɵɵinject, INJECTOR, InjectionToken, Input, HostListener, Component, EventEmitter, Output, Directive, ContentChild, ElementRef, ChangeDetectionStrategy, ViewChild, Pipe, Renderer2, NgModule } from '@angular/core';
+import { ɵɵdefineInjectable, Injectable, ComponentFactoryResolver, ApplicationRef, Injector, Optional, Inject, ɵɵinject, INJECTOR, InjectionToken, HostBinding, Input, HostListener, Component, EventEmitter, Output, Directive, ContentChild, ElementRef, ChangeDetectionStrategy, ViewChild, Pipe, Renderer2, NgModule } from '@angular/core';
 import { DOCUMENT, CommonModule } from '@angular/common';
 import { Subject, BehaviorSubject, merge } from 'rxjs';
 import { shareReplay, takeUntil, filter, tap, map, distinctUntilChanged } from 'rxjs/operators';
@@ -330,6 +330,9 @@ let NgxMaterialTimepickerContainerComponent = class NgxMaterialTimepickerContain
         this.activeTimeUnit = TimeUnit.HOUR;
         this.unsubscribe = new Subject();
     }
+    get class() {
+        return this.hostClass;
+    }
     set defaultTime(time) {
         this._defaultTime = time;
         this.setDefaultTime(time);
@@ -344,13 +347,11 @@ let NgxMaterialTimepickerContainerComponent = class NgxMaterialTimepickerContain
     ngOnInit() {
         this.animationState = !this.disableAnimation && AnimationState.ENTER;
         this.defineTime();
-        this.selectedHour = this.timepickerService.selectedHour
-            .pipe(shareReplay({ bufferSize: 1, refCount: true }));
-        this.selectedMinute = this.timepickerService.selectedMinute
-            .pipe(shareReplay({ bufferSize: 1, refCount: true }));
-        this.selectedPeriod = this.timepickerService.selectedPeriod
-            .pipe(shareReplay({ bufferSize: 1, refCount: true }));
-        this.timepickerBaseRef.timeUpdated.pipe(takeUntil(this.unsubscribe))
+        this.selectedHour = this.timepickerService.selectedHour.pipe(shareReplay({ bufferSize: 1, refCount: true }));
+        this.selectedMinute = this.timepickerService.selectedMinute.pipe(shareReplay({ bufferSize: 1, refCount: true }));
+        this.selectedPeriod = this.timepickerService.selectedPeriod.pipe(shareReplay({ bufferSize: 1, refCount: true }));
+        this.timepickerBaseRef.timeUpdated
+            .pipe(takeUntil(this.unsubscribe))
             .subscribe(this.setDefaultTime.bind(this));
     }
     onHourChange(hour) {
@@ -386,7 +387,8 @@ let NgxMaterialTimepickerContainerComponent = class NgxMaterialTimepickerContain
         this.animationState = AnimationState.LEAVE;
     }
     animationDone(event) {
-        if (event.phaseName === 'done' && event.toState === AnimationState.LEAVE) {
+        if (event.phaseName === "done" &&
+            event.toState === AnimationState.LEAVE) {
             this.timepickerBaseRef.close();
         }
     }
@@ -399,7 +401,7 @@ let NgxMaterialTimepickerContainerComponent = class NgxMaterialTimepickerContain
     }
     defineTime() {
         const minTime = this.minTime;
-        if (minTime && (!this.time && !this.defaultTime)) {
+        if (minTime && !this.time && !this.defaultTime) {
             const time = TimeAdapter.fromDateTimeToString(minTime, this.format);
             this.setDefaultTime(time);
         }
@@ -407,7 +409,7 @@ let NgxMaterialTimepickerContainerComponent = class NgxMaterialTimepickerContain
     onTimeChange() {
         const time = TimeAdapter.toLocaleTimeString(this.timepickerService.getFullTime(this.format), {
             locale: this.locale,
-            format: this.format
+            format: this.format,
         });
         this.timepickerBaseRef.timeChanged.emit(time);
     }
@@ -418,31 +420,31 @@ NgxMaterialTimepickerContainerComponent.ctorParameters = () => [
     { type: String, decorators: [{ type: Inject, args: [TIME_LOCALE,] }] }
 ];
 __decorate([
+    HostBinding("class")
+], NgxMaterialTimepickerContainerComponent.prototype, "class", null);
+__decorate([
     Input()
 ], NgxMaterialTimepickerContainerComponent.prototype, "defaultTime", null);
 __decorate([
-    HostListener('keydown', ['$event'])
+    HostListener("keydown", ["$event"])
 ], NgxMaterialTimepickerContainerComponent.prototype, "onKeydown", null);
 NgxMaterialTimepickerContainerComponent = __decorate([
     Component({
-        selector: 'ngx-material-timepicker-container',
+        selector: "ngx-material-timepicker-container",
         template: "<div class=\"timepicker-backdrop-overlay\" [overlay]=\"preventOverlayClick\"\n     [ngClass]=\"{'timepicker-backdrop-overlay--transparent': appendToInput}\"></div>\n<div class=\"timepicker-overlay\">\n    <ngx-material-timepicker-content [appendToInput]=\"appendToInput\"\n                                     [inputElement]=\"inputElement\"\n                                     [ngxMaterialTimepickerTheme]=\"theme\">\n        <div class=\"timepicker\"\n             [@timepicker]=\"animationState\"\n             (@timepicker.done)=\"animationDone($event)\"\n             [ngClass]=\"timepickerClass\">\n            <header class=\"timepicker__header\">\n                <ngx-material-timepicker-dial [format]=\"format\" [hour]=\"(selectedHour | async)?.time\"\n                                              [minute]=\"(selectedMinute | async)?.time\"\n                                              [period]=\"selectedPeriod | async\"\n                                              [activeTimeUnit]=\"activeTimeUnit\"\n                                              [minTime]=\"minTime\"\n                                              [maxTime]=\"maxTime\"\n                                              [isEditable]=\"enableKeyboardInput\"\n                                              [editableHintTmpl]=\"editableHintTmpl\"\n                                              [minutesGap]=\"minutesGap\"\n                                              [hoursOnly]=\"hoursOnly\"\n                                              (periodChanged)=\"changePeriod($event)\"\n                                              (timeUnitChanged)=\"changeTimeUnit($event)\"\n                                              (hourChanged)=\"onHourChange($event)\"\n                                              (minuteChanged)=\"onMinuteChange($event)\"\n                ></ngx-material-timepicker-dial>\n            </header>\n            <div class=\"timepicker__main-content\">\n                <div class=\"timepicker__body\" [ngSwitch]=\"activeTimeUnit\">\n                    <div *ngSwitchCase=\"timeUnit.HOUR\">\n                        <ngx-material-timepicker-24-hours-face *ngIf=\"format === 24;else ampmHours\"\n                                                               (hourChange)=\"onHourChange($event)\"\n                                                               [selectedHour]=\"selectedHour | async\"\n                                                               [minTime]=\"minTime\"\n                                                               [maxTime]=\"maxTime\"\n                                                               [format]=\"format\"\n                                                               (hourSelected)=\"onHourSelected($event)\"></ngx-material-timepicker-24-hours-face>\n                        <ng-template #ampmHours>\n                            <ngx-material-timepicker-12-hours-face\n                                (hourChange)=\"onHourChange($event)\"\n                                [selectedHour]=\"selectedHour | async\"\n                                [period]=\"selectedPeriod | async\"\n                                [minTime]=\"minTime\"\n                                [maxTime]=\"maxTime\"\n                                (hourSelected)=\"onHourSelected($event)\"></ngx-material-timepicker-12-hours-face>\n                        </ng-template>\n                    </div>\n                    <ngx-material-timepicker-minutes-face *ngSwitchCase=\"timeUnit.MINUTE\"\n                                                          [selectedMinute]=\"selectedMinute | async\"\n                                                          [selectedHour]=\"(selectedHour | async)?.time\"\n                                                          [minTime]=\"minTime\"\n                                                          [maxTime]=\"maxTime\"\n                                                          [format]=\"format\"\n                                                          [period]=\"selectedPeriod | async\"\n                                                          [minutesGap]=\"minutesGap\"\n                                                          (minuteChange)=\"onMinuteChange($event)\"></ngx-material-timepicker-minutes-face>\n                </div>\n                <div class=\"timepicker__actions\">\n                    <div (click)=\"close()\">\n                        <!--suppress HtmlUnknownAttribute -->\n                        <ng-container\n                            *ngTemplateOutlet=\"cancelBtnTmpl ? cancelBtnTmpl : cancelBtnDefault\"></ng-container>\n                    </div>\n                    <div (click)=\"setTime()\">\n                        <!--suppress HtmlUnknownAttribute -->\n                        <ng-container\n                            *ngTemplateOutlet=\"confirmBtnTmpl ? confirmBtnTmpl : confirmBtnDefault\"></ng-container>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </ngx-material-timepicker-content>\n</div>\n<ng-template #cancelBtnDefault>\n    <ngx-material-timepicker-button>Cancel</ngx-material-timepicker-button>\n</ng-template>\n<ng-template #confirmBtnDefault>\n    <ngx-material-timepicker-button>Ok</ngx-material-timepicker-button>\n</ng-template>\n",
         animations: [
-            trigger('timepicker', [
+            trigger("timepicker", [
                 transition(`* => ${AnimationState.ENTER}`, [
-                    style({ transform: 'translateY(-30%)' }),
-                    animate('0.2s ease-out', style({ transform: 'translateY(0)' }))
+                    style({ transform: "translateY(-30%)" }),
+                    animate("0.2s ease-out", style({ transform: "translateY(0)" })),
                 ]),
                 transition(`${AnimationState.ENTER} => ${AnimationState.LEAVE}`, [
-                    style({ transform: 'translateY(0)', opacity: 1 }),
-                    animate('0.2s ease-out', style({ transform: 'translateY(-30%)', opacity: 0 }))
-                ])
-            ])
+                    style({ transform: "translateY(0)", opacity: 1 }),
+                    animate("0.2s ease-out", style({ transform: "translateY(-30%)", opacity: 0 })),
+                ]),
+            ]),
         ],
         providers: [NgxMaterialTimepickerService],
-        host: {
-            'class': 'class'
-        },
         styles: [":host{--body-background-color:#fff;--primary-font-family:'Roboto',sans-serif;--button-color:deepskyblue;--dial-active-color:#fff;--dial-inactive-color:rgba(255, 255, 255, .5);--dial-background-color:deepskyblue;--dial-editable-active-color:deepskyblue;--dial-editable-background-color:#fff;--clock-face-time-active-color:#fff;--clock-face-time-inactive-color:#6c6c6c;--clock-face-inner-time-inactive-color:#929292;--clock-face-time-disabled-color:#c5c5c5;--clock-face-background-color:#f0f0f0;--clock-hand-color:deepskyblue}.timepicker-backdrop-overlay{position:fixed;top:0;bottom:0;right:0;left:0;background-color:rgba(0,0,0,.3);z-index:999;pointer-events:auto}.timepicker-backdrop-overlay--transparent{background-color:transparent}.timepicker-overlay{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;justify-content:center;align-items:center;z-index:999;pointer-events:none}.timepicker{width:300px;border-radius:2px;box-shadow:rgba(0,0,0,.25) 0 14px 45px,rgba(0,0,0,.22) 0 10px 18px;outline:0;position:static;z-index:999;pointer-events:auto}.timepicker__header{padding:15px 30px;background-color:#00bfff}@supports (background-color:var(--dial-background-color)){.timepicker__header{background-color:var(--dial-background-color)}}.timepicker__body{padding:15px 5px;display:flex;justify-content:center;align-items:center;background-color:#fff}@supports (background-color:var(--body-background-color)){.timepicker__body{background-color:var(--body-background-color)}}.timepicker__actions{display:flex;justify-content:flex-end;padding:15px;background-color:#fff}@supports (background-color:var(--body-background-color)){.timepicker__actions{background-color:var(--body-background-color)}}@media (max-device-width:1023px) and (orientation:landscape){.timepicker{display:flex;width:515px}.timepicker__header{display:flex;align-items:center}.timepicker__main-content{display:flex;flex-direction:column;width:100%}.timepicker__actions{padding:5px;margin-top:-1px}}"]
     }),
     __param(2, Inject(TIME_LOCALE))
@@ -533,7 +535,7 @@ let NgxMaterialTimepickerComponent = class NgxMaterialTimepickerComponent {
             theme: this.theme || this._ngxMaterialTimepickerTheme,
             timepickerClass: this.timepickerClass,
             inputElement: this.inputElement,
-            class: this.hostClass
+            hostClass: this.hostClass
         });
         this.opened.next();
         this.subscribeToEvents();
