@@ -16,11 +16,14 @@ const ESCAPE = 27;
 @Component({
     selector: 'ngx-material-timepicker',
     template: '',
+    host: {
+        'class': 'hostClass'
+    }
 })
 export class NgxMaterialTimepickerComponent implements TimepickerRef {
 
     timeUpdated = new Subject<string>();
-
+    @Input() hostClass = '';
     @Input() cancelBtnTmpl: TemplateRef<Node>;
     @Input() editableHintTmpl: TemplateRef<Node>;
     @Input() confirmBtnTmpl: TemplateRef<Node>;
@@ -133,7 +136,8 @@ export class NgxMaterialTimepickerComponent implements TimepickerRef {
             hoursOnly: this.hoursOnly,
             theme: this.theme || this._ngxMaterialTimepickerTheme,
             timepickerClass: this.timepickerClass,
-            inputElement: this.inputElement
+            inputElement: this.inputElement,
+            class: this.hostClass
         });
         this.opened.next();
         this.subscribeToEvents();

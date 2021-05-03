@@ -35,7 +35,10 @@ export enum AnimationState {
             ])
         ])
     ],
-    providers: [NgxMaterialTimepickerService]
+    providers: [NgxMaterialTimepickerService],
+    host: {
+        'class': 'class'
+    }
 })
 export class NgxMaterialTimepickerContainerComponent implements OnInit, OnDestroy, TimepickerConfig {
 
@@ -68,6 +71,7 @@ export class NgxMaterialTimepickerContainerComponent implements OnInit, OnDestro
     time: string;
 
     timepickerClass: string;
+    class: string;
     theme: NgxMaterialTimepickerTheme;
     timepickerBaseRef: TimepickerRef;
 
